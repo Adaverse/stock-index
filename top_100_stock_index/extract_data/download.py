@@ -20,11 +20,11 @@ def get_ticker_df(ticker, period, **kwargs):
     df_with_market_cap = pd.concat([df_with_market_cap, hist])
     return df_with_market_cap
 
-def get_all_tickers_data(duckdb_conn):
+def get_all_tickers_data(duckdb_conn, num_tickers):
     complete_data_df = pd.DataFrame()
     tickers = get_sp_500_tickers()
     # TODO: remove 10 limit
-    for ticker in tqdm(tickers[:10]):
+    for ticker in tqdm(tickers[:num_tickers]):
         ticker_df = get_ticker_df(ticker, "1mo")
         complete_data_df = pd.concat([complete_data_df, ticker_df])
     try:

@@ -1,12 +1,9 @@
-TOP_X = 5
-INDEX_TICKER = "I5"
-
-import duckdb, datetime
+import datetime
 from top_100_stock_index.exceptions import DataNotFoundException
 
-def init_or_update_data(conn):
+def init_or_update_data(conn, index_ticker, top_x):
     index_value = 100
-    total_securities = TOP_X
+    total_securities = top_x
     weightage = index_value / total_securities
     
     dates = conn.execute("""
@@ -47,17 +44,15 @@ def init_or_update_data(conn):
             joined_df["new_close_price"] = joined_df["Close"]
             joined_df["new_close_value"] = joined_df["Close"] * joined_df["new_open_quantity"]
             new_index_value = joined_df["new_close_value"].sum()
-            processed_df = conn.execute("SELECT * FROM index_composition WHERE 1=2").df()
+
             conn.execute("""
                 INSERT INTO index_data (Date, Ticker, Open_Price, Close_Price) 
                 VALUES (?, ?, ?, ?)
-            """, [base_date, INDEX_TICKER, open_index_price, new_index_value])
+            """, [base_date, index_ticker, open_index_price, new_index_value])
             new_stock_value = new_index_value/total_securities
             joined_df["rebalanced_close_value"] = new_stock_value
             joined_df["rebalanced_close_quantity"] = new_stock_value / joined_df["new_close_price"]
-            processed_df = joined_df[
-                ['Date', 'Ticker', 'new_open_price', 'new_open_value', 'new_open_quantity', 'new_close_price', 'rebalanced_close_value', 'rebalanced_close_quantity']
-            ]
+
             conn.execute("""
                 INSERT INTO index_composition (Date, Ticker, Open_Price, Close_Price, Open_Quantity, Close_Quantity, Open_Value, Close_Value)
                 SELECT
@@ -90,4 +85,4 @@ def init_or_update_data(conn):
             conn.execute("""
                 INSERT INTO index_data (Date, Ticker, Open_Price, Close_Price) 
                 VALUES (?, ?, ?, ?)
-            """, [base_date, INDEX_TICKER, 0, index_value])
+            """, [base_date, index_ticker, 0, index_value])
