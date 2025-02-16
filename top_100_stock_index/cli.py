@@ -1,12 +1,9 @@
 import typer
-from extract_data.download import get_ticker_df, get_all_tickers_data
 import duckdb
 
+from extract_data.download import get_ticker_df, get_all_tickers_data
+from index.index_setup import init_or_update_data
 app = typer.Typer()
-
-@app.command()
-def hello(name: str):
-    print(f"Hello {name}")
 
 @app.command()
 def init_data():
@@ -36,6 +33,11 @@ def init_data():
             Close_Price DOUBLE,             -- Closing price of the stock
         )
     """)
+
+@app.command()
+def init_or_update_index(index_ticker: str):
+    conn = duckdb.connect(database = "market_data.duckdb", read_only = False)
+    init_or_update_data(conn)
 
 if __name__ == "__main__":
     app()

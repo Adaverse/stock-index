@@ -2,9 +2,9 @@ TOP_X = 5
 INDEX_TICKER = "I5"
 
 import duckdb, datetime
-from ..excepions import DataNotFoundException
+from top_100_stock_index.exceptions import DataNotFoundException
 
-def init_data(conn):
+def init_or_update_data(conn):
     index_value = 100
     total_securities = TOP_X
     weightage = index_value / total_securities
@@ -51,7 +51,7 @@ def init_data(conn):
             conn.execute("""
                 INSERT INTO index_data (Date, Ticker, Open_Price, Close_Price) 
                 VALUES (?, ?, ?, ?)
-            """, [base_date, "T100", open_index_price, new_index_value])
+            """, [base_date, INDEX_TICKER, open_index_price, new_index_value])
             new_stock_value = new_index_value/total_securities
             joined_df["rebalanced_close_value"] = new_stock_value
             joined_df["rebalanced_close_quantity"] = new_stock_value / joined_df["new_close_price"]
@@ -90,4 +90,4 @@ def init_data(conn):
             conn.execute("""
                 INSERT INTO index_data (Date, Ticker, Open_Price, Close_Price) 
                 VALUES (?, ?, ?, ?)
-            """, [base_date, "T100", 0, index_value])
+            """, [base_date, INDEX_TICKER, 0, index_value])
