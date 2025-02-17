@@ -16,12 +16,12 @@ To set up the project locally, follow these steps:
    git clone https://github.com/Adaverse/stock-index.git
    cd stock-index
 3. **Install Dependencies**  
-   Use Poetry to install the project dependencies:
+   Use Poetry to install the project dependencies, which can be found in `pyproject.toml` file:
 
    ```bash
    poetry install
 4. **Initialize DB**  
-   To import data from API and initialize required tables, run below command (num-tickers is optional field which specifies how many tickers data to fetch from API. For quick testing it can be set to small values like 50):
+   To import data from API of **Yahoo Finance** and initialize required tables, run below command (num-tickers is optional field which specifies how many tickers data to fetch from API. For quick testing it can be set to small values like 50):
 
    ```bash
    poetry run python top_100_stock_index/cli.py init-data --num-tickers 50
@@ -37,3 +37,4 @@ To set up the project locally, follow these steps:
 For any cli related help, run
    ```bash
    poetry run python top_100_stock_index/cli.py --help
+
