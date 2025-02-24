@@ -4,11 +4,14 @@ from tqdm import tqdm
 import duckdb
 
 from .ticker_symbols import get_sp_500_tickers
+from .utility import get_rate_limited_session
 
 def get_ticker_df(ticker, period, **kwargs):
     df_with_market_cap = pd.DataFrame()
+    session = get_rate_limited_session()
+    
+    stock = yf.Ticker(ticker, session=session)
 
-    stock = yf.Ticker(ticker)
     hist = stock.history(period=period)
     hist['Date'] = hist.index
 
